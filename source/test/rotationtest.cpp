@@ -1,13 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////////////////////
-/// \file RotationTests.cpp
-/// \brief Unit tests for the implementation of the rotation matrix class.
-/// \details Unit tests for the various Lie Group functions will test both
-/// special cases,
-///          and randomly generated cases.
-///
-/// \author Sean Anderson
-//////////////////////////////////////////////////////////////////////////////////////////////
-
 #include <gtest/gtest.h>
 
 #include <math.h>

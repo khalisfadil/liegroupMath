@@ -1,12 +1,3 @@
-//////////////////////////////////////////////////////////////////////////////////////////////
-/// \file NaiveSO3Tests.cpp
-/// \brief Unit tests for the naive implementation of the SO3 Lie Group math.
-/// \details Unit tests for the various Lie Group functions will test both special cases,
-///          and randomly generated cases.
-///
-/// \author Sean Anderson
-//////////////////////////////////////////////////////////////////////////////////////////////
-
 #include <gtest/gtest.h>
 
 #include <math.h>
