@@ -15,19 +15,19 @@ find_package(GTest REQUIRED)
 include_directories(
   ${EIGEN3_INCLUDE_DIR}
   ${GTEST_INCLUDE_DIRS}
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/source/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
 
 # Source files for the lgmath library
 set(SOURCE_FILES
-  source/src/r3/operations.cpp
-  source/src/se3/operations.cpp
-  source/src/se3/transformations.cpp
-  source/src/se3/transformationswithcovariance.cpp
-  source/src/commonmath.cpp
-  source/src/so3/operations.cpp
-  source/src/so3/rotations.cpp
+  src/r3/operations.cpp
+  src/se3/operations.cpp
+  src/se3/transformations.cpp
+  src/se3/transformationswithcovariance.cpp
+  src/commonmath.cpp
+  src/so3/operations.cpp
+  src/so3/rotations.cpp
 )
 
 # Build the lgmath shared library
@@ -35,7 +35,7 @@ add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME}
   PUBLIC
     ${EIGEN3_INCLUDE_DIR}
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/source/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
@@ -43,7 +43,7 @@ target_include_directories(${PROJECT_NAME}
 set(PROJECT_LIBRARY ${PROJECT_NAME})
 
 # Build the test executable
-add_executable(se3_tests source/test/se3test.cpp)
+add_executable(se3_tests test/se3test.cpp)
 target_link_libraries(se3_tests
   ${PROJECT_NAME}
   ${GTEST_LIBRARIES}
@@ -51,7 +51,7 @@ target_link_libraries(se3_tests
   pthread
 )
 
-add_executable(so3_tests source/test/so3test.cpp)
+add_executable(so3_tests test/so3test.cpp)
 target_link_libraries(so3_tests
   ${PROJECT_NAME}
   ${GTEST_LIBRARIES}
@@ -59,7 +59,7 @@ target_link_libraries(so3_tests
   pthread
 )
 
-add_executable(transform_test source/test/transformtest.cpp)
+add_executable(transform_test test/transformtest.cpp)
 target_link_libraries(transform_test
   ${PROJECT_NAME}
   ${GTEST_LIBRARIES}
@@ -67,7 +67,7 @@ target_link_libraries(transform_test
   pthread
 )
 
-add_executable(transformwithcov_test source/test/transformwithcovariancetests.cpp)
+add_executable(transformwithcov_test test/transformwithcovariancetests.cpp)
 target_link_libraries(transformwithcov_test
   ${PROJECT_NAME}
   ${GTEST_LIBRARIES}
@@ -75,7 +75,7 @@ target_link_libraries(transformwithcov_test
   pthread
 )
 
-add_executable(covariance_test source/test/covariancetest.cpp)
+add_executable(covariance_test test/covariancetest.cpp)
 target_link_libraries(covariance_test
   ${PROJECT_NAME}
   ${GTEST_LIBRARIES}
@@ -83,7 +83,7 @@ target_link_libraries(covariance_test
   pthread
 )
 
-add_executable(rotation_test source/test/rotationtest.cpp)
+add_executable(rotation_test test/rotationtest.cpp)
 target_link_libraries(rotation_test
   ${PROJECT_NAME}
   ${GTEST_LIBRARIES}
@@ -93,7 +93,7 @@ target_link_libraries(rotation_test
 
 # Install library and headers
 install(
-  DIRECTORY source/include/
+  DIRECTORY include/
   DESTINATION include
   FILES_MATCHING PATTERN "*.hpp"
 )
