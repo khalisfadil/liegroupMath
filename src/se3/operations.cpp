@@ -155,25 +155,15 @@ namespace math {
         // -----------------------------------------------------------------------------
 
         Eigen::Matrix<double, 6, 6> tranAd(const Eigen::Matrix3d& C_ab, const Eigen::Vector3d& r_ba_ina) {
-            // Validate inputs
-            if (C_ab.hasNaN() || r_ba_ina.hasNaN() || !C_ab.allFinite() || !r_ba_ina.allFinite()) {
-                throw std::runtime_error("tranAd: Input C_ab or r_ba_ina contains NaN or infinite values");
-            }
-
             Eigen::Matrix<double, 6, 6> adjoint_T_ab = Eigen::Matrix<double, 6, 6>::Zero();
             adjoint_T_ab.block<3, 3>(0, 0) = C_ab;                    // Top-left 3x3
             adjoint_T_ab.block<3, 3>(3, 3) = C_ab;                    // Bottom-right 3x3
             adjoint_T_ab.block<3, 3>(0, 3) = so3::hat(r_ba_ina) * C_ab; // Top-right 3x3
             adjoint_T_ab.block<3, 3>(3, 0) = Eigen::Matrix3d::Zero();  // Bottom-left 3x3 (explicitly zero)
-
             return adjoint_T_ab;
         }
 
         Eigen::Matrix<double, 6, 6> tranAd(const Eigen::Matrix4d& T_ab) {
-            // Validate input transformation matrix
-            if (T_ab.hasNaN() || !T_ab.allFinite()) {
-                throw std::runtime_error("tranAd: Input transformation matrix T_ab contains NaN or infinite values");
-            }
             return tranAd(T_ab.topLeftCorner<3, 3>(), T_ab.topRightCorner<3, 1>());
         }
 

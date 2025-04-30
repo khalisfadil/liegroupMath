@@ -149,4 +149,4 @@ add_test(NAME SO3Tests COMMAND so3_tests)
 add_test(NAME TRANSFORMTests COMMAND transform_test)
 add_test(NAME TRANSFORMWITHCOVTests COMMAND transformwithcov_test)
 add_test(NAME COVARIANCETests COMMAND covariance_test)
-add_test(NAME ROTATIONTests COMMAND rotation_test)git add .
+add_test(NAME ROTATIONTests COMMAND rotation_test)
