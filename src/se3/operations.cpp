@@ -106,19 +106,22 @@ namespace math {
             assert(out_C_ab && "Null pointer out_C_ab in vec2tran_numerical");
             assert(out_r_ba_ina && "Null pointer out_r_ba_ina in vec2tran_numerical");
 
+             // Init 4x4 transformation
             Eigen::Matrix4d T_ab = Eigen::Matrix4d::Identity();
-            Eigen::Matrix<double, 6, 1> xi_ba;
-            xi_ba.head<3>().noalias() = rho_ba;  // Scalar assignment for safety
-            xi_ba.tail<3>().noalias() = aaxis_ba;  // Scalar assignment for safety
 
-            Eigen::Matrix4d x_small = hat(xi_ba);
+            // Incremental variables
+            Eigen::Matrix<double, 6, 1> xi_ba;
+            xi_ba << rho_ba, aaxis_ba;
+            Eigen::Matrix4d x_small = se3::hat(xi_ba);
             Eigen::Matrix4d x_small_n = Eigen::Matrix4d::Identity();
 
-            for (unsigned int n = 1; n <= numTerms; ++n) {
-                x_small_n = x_small_n * x_small / static_cast<double>(n);
+            // Loop over sum up to the specified numTerms
+            for (unsigned int n = 1; n <= numTerms; n++) {
+                x_small_n = x_small_n * x_small / double(n);
                 T_ab += x_small_n;
             }
 
+            // Fill output
             *out_C_ab = T_ab.topLeftCorner<3, 3>();
             *out_r_ba_ina = T_ab.topRightCorner<3, 1>();
         }
@@ -187,46 +190,26 @@ namespace math {
         // SE(3) Q Matrix
         // -----------------------------------------------------------------------------
 
-        // Eigen::Matrix3d vec2Q(const Eigen::Vector3d& rho_ba,
-        //                     const Eigen::Vector3d& aaxis_ba) {
-        //     const double ang = aaxis_ba.norm();
-        //     if (ang < 1e-12) return 0.5 * so3::hat(rho_ba);
+        Eigen::Matrix3d vec2Q(const Eigen::Vector3d& rho_ba,
+                            const Eigen::Vector3d& aaxis_ba) {
+            const double ang = aaxis_ba.norm();
+            if (ang < 1e-12) return 0.5 * so3::hat(rho_ba);
 
-        //     const double ang2 = ang * ang;
-        //     const double ang3 = ang2 * ang;
-        //     const double ang4 = ang3 * ang;
-        //     const double ang5 = ang4 * ang;
-        //     const double cang = std::cos(ang);
-        //     const double sang = std::sin(ang);
-        //     const double m2 = (ang - sang) / ang3;
-        //     const double m3 = (1.0 - 0.5 * ang2 - cang) / ang4;
-        //     const double m4 = 0.5 * (m3 - 3 * (ang - sang - ang3 / 6) / ang5);
+            const double ang2 = ang * ang;
+            const double ang3 = ang2 * ang;
+            const double ang4 = ang3 * ang;
+            const double ang5 = ang4 * ang;
+            const double cang = std::cos(ang);
+            const double sang = std::sin(ang);
+            const double m2 = (ang - sang) / ang3;
+            const double m3 = (1.0 - 0.5 * ang2 - cang) / ang4;
+            const double m4 = 0.5 * (m3 - 3 * (ang - sang - ang3 / 6) / ang5);
 
-        //     Eigen::Matrix3d rx = so3::hat(rho_ba);
-        //     Eigen::Matrix3d px = so3::hat(aaxis_ba);
-        //     return 0.5 * rx + m2 * (px * rx + rx * px + px * rx * px) -
-        //         m3 * (px * px * rx + rx * px * px - 3 * px * rx * px) -
-        //         m4 * (px * rx * px * px + px * px * rx * px);
-        // }
-
-        Eigen::Matrix3d vec2Q(const Eigen::Vector3d& rho_ba, const Eigen::Vector3d& aaxis_ba) {
-            const double phi = aaxis_ba.norm();
-            if (phi < 1e-12) return 0.5 * so3::hat(rho_ba);
-            const double phi2 = phi * phi;
-            const double phi3 = phi2 * phi;
-            const double phi4 = phi3 * phi;
-            const double phi5 = phi4 * phi;
-            const double cphi = std::cos(phi);
-            const double sphi = std::sin(phi);
-            const double a = (phi - sphi) / phi3;
-            const double b = (1.0 - 0.5 * phi2 - cphi) / phi4;
-            const double c = 0.5 * (b - 3.0 * (phi - sphi - phi3 / 6.0) / phi5);
-            Eigen::Matrix3d rho_x = so3::hat(rho_ba);
-            Eigen::Matrix3d phi_x = so3::hat(aaxis_ba);
-            return 0.5 * rho_x +
-                a * (phi_x * rho_x + rho_x * phi_x + phi_x * rho_x * phi_x) +
-                b * (phi_x * phi_x * rho_x + rho_x * phi_x * phi_x - 3.0 * phi_x * rho_x * phi_x) +
-                c * (phi_x * rho_x * phi_x * phi_x + phi_x * phi_x * rho_x * phi_x);
+            Eigen::Matrix3d rx = so3::hat(rho_ba);
+            Eigen::Matrix3d px = so3::hat(aaxis_ba);
+            return 0.5 * rx + m2 * (px * rx + rx * px + px * rx * px) -
+                m3 * (px * px * rx + rx * px * px - 3 * px * rx * px) -
+                m4 * (px * rx * px * px + px * px * rx * px);
         }
 
         Eigen::Matrix3d vec2Q(const Eigen::Matrix<double, 6, 1>& xi_ba) {
