@@ -13,13 +13,9 @@ namespace math {
         // -----------------------------------------------------------------------------
 
         Eigen::Matrix3d hat(const Eigen::Vector3d& vector) {
-            Eigen::Matrix3d mat = Eigen::Matrix3d::Zero();
-            mat(0, 1) = -vector[2];
-            mat(0, 2) = vector[1];
-            mat(1, 0) = vector[2];
-            mat(1, 2) = -vector[0];
-            mat(2, 0) = -vector[1];
-            mat(2, 1) = vector[0];
+            Eigen::Matrix3d mat;
+            mat << 0.0, -vector[2], vector[1], vector[2], 0.0, -vector[0], -vector[1],
+                vector[0], 0.0;
             return mat;
         }
 
