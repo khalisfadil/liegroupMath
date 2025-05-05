@@ -80,22 +80,6 @@ namespace math {
             Eigen::Matrix3d J_ab;
             so3::vec2rot(aaxis_ba, out_C_ab, &J_ab);
             *out_r_ba_ina = J_ab * rho_ba;
-
-            // if (aaxis_ba.norm() < 1e-12) {
-            //     // If angle is very small, rotation is Identity
-            //     *out_C_ab = Eigen::Matrix3d::Identity();
-            //     *out_r_ba_ina = rho_ba;
-            // } else {
-            //     // Normal analytical solution
-            //     Eigen::Matrix3d J_ab;
-
-            //     // Use rotation identity involving jacobian, as we need it to
-            //     // convert rho_ba to the proper translation
-            //     so3::vec2rot(aaxis_ba, out_C_ab, &J_ab);
-
-            //     // Convert rho_ba (twist-translation) to r_ba_ina
-            //     *out_r_ba_ina = J_ab * rho_ba;
-            // }
         }
 
         void vec2tran_numerical(const Eigen::Vector3d& rho_ba,
@@ -156,12 +140,18 @@ namespace math {
         // -----------------------------------------------------------------------------
 
         Eigen::Matrix<double, 6, 1> tran2vec(const Eigen::Matrix3d& C_ab,
-                                            const Eigen::Vector3d& r_ba_ina) {
+                                     const Eigen::Vector3d& r_ba_ina) {
+            // Init
             Eigen::Matrix<double, 6, 1> xi_ba;
+
+            // Get axis angle from rotation matrix
             Eigen::Vector3d aaxis_ba = so3::rot2vec(C_ab);
+
+            // Get twist-translation vector using Jacobian
             Eigen::Vector3d rho_ba = so3::vec2jacinv(aaxis_ba) * r_ba_ina;
-            xi_ba.head<3>().noalias() = rho_ba;  // Scalar assignment to avoid AVX over-read
-            xi_ba.tail<3>().noalias() = aaxis_ba;  // Scalar assignment to avoid AVX over-read
+
+            // Return se3 algebra vector
+            xi_ba << rho_ba, aaxis_ba;
             return xi_ba;
         }
 
