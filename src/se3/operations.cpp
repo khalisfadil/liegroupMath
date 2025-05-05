@@ -193,10 +193,6 @@ namespace math {
         //         m4 * (px * rx * px * px + px * px * rx * px);
         // }
 
-        // Eigen::Matrix3d vec2Q(const Eigen::Matrix<double, 6, 1>& xi_ba) {
-        //     return vec2Q(xi_ba.head<3>(), xi_ba.tail<3>());
-        // }
-
         Eigen::Matrix3d vec2Q(const Eigen::Vector3d& rho_ba, const Eigen::Vector3d& aaxis_ba) {
             const double phi = aaxis_ba.norm();
             if (phi < 1e-12) return 0.5 * so3::hat(rho_ba);
@@ -216,7 +212,11 @@ namespace math {
                 b * (phi_x * phi_x * rho_x + rho_x * phi_x * phi_x - 3.0 * phi_x * rho_x * phi_x) +
                 c * (phi_x * rho_x * phi_x * phi_x + phi_x * phi_x * rho_x * phi_x);
         }
-        
+
+        Eigen::Matrix3d vec2Q(const Eigen::Matrix<double, 6, 1>& xi_ba) {
+            return vec2Q(xi_ba.head<3>(), xi_ba.tail<3>());
+        }
+
         // -----------------------------------------------------------------------------
         // SE(3) Left Jacobian
         // -----------------------------------------------------------------------------
