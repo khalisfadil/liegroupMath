@@ -71,7 +71,7 @@ namespace math {
             assert(out_C_ab && "Null pointer out_C_ab in vec2tran_analytical");
             assert(out_r_ba_ina && "Null pointer out_r_ba_ina in vec2tran_analytical");
 
-            if (aaxis_ba.squaredNorm() < 1e-24) {
+            if (aaxis_ba.norm() < 1e-12) {
                 *out_C_ab = Eigen::Matrix3d::Identity();
                 *out_r_ba_ina = rho_ba;
                 return;
@@ -80,6 +80,22 @@ namespace math {
             Eigen::Matrix3d J_ab;
             so3::vec2rot(aaxis_ba, out_C_ab, &J_ab);
             *out_r_ba_ina = J_ab * rho_ba;
+
+            // if (aaxis_ba.norm() < 1e-12) {
+            //     // If angle is very small, rotation is Identity
+            //     *out_C_ab = Eigen::Matrix3d::Identity();
+            //     *out_r_ba_ina = rho_ba;
+            // } else {
+            //     // Normal analytical solution
+            //     Eigen::Matrix3d J_ab;
+
+            //     // Use rotation identity involving jacobian, as we need it to
+            //     // convert rho_ba to the proper translation
+            //     so3::vec2rot(aaxis_ba, out_C_ab, &J_ab);
+
+            //     // Convert rho_ba (twist-translation) to r_ba_ina
+            //     *out_r_ba_ina = J_ab * rho_ba;
+            // }
         }
 
         void vec2tran_numerical(const Eigen::Vector3d& rho_ba,
